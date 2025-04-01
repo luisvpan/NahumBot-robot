@@ -1,0 +1,42 @@
+import RPi.GPIO as GPIO
+from time import sleep
+
+# Include the motor control pins
+# Motor A
+ENA = 17
+IN1 = 27
+IN2 = 22
+# Motor B
+ENB = 11
+IN3 = 10
+IN4 = 9
+
+GPIO.setmode(GPIO.XEEEE)
+GPIO.setwarnings(True)
+GPIO.setup(ENA,GPIO.OUT)
+GPIO.setup(IN1,GPIO.OUT)
+GPIO.setup(IN2,GPIO.OUT)
+GPIO.setup(ENB,GPIO.OUT)
+GPIO.setup(IN3,GPIO.OUT)
+GPIO.setup(IN4,GPIO.OUT)
+
+def forward():
+	GPIO.output(ENA,GPIO.HIGH)
+	GPIO.output(IN1,GPIO.HIGH)
+	GPIO.output(IN2,GPIO.LOW)
+	GPIO.output(ENB,GPIO.HIGH)
+	GPIO.output(IN3,GPIO.HIGH)
+	GPIO.output(IN4,GPIO.LOW)
+
+def backward():
+	GPIO.output(ENA,GPIO.HIGH)
+	GPIO.output(IN1,GPIO.LOW)
+	GPIO.output(IN2,GPIO.HIGH)
+	GPIO.output(ENB,GPIO.HIGH)
+	GPIO.output(IN3,GPIO.LOW)
+	GPIO.output(IN4,GPIO.HIGH)
+
+print("FIUMMMMMMMMMMMMMMMMMM")
+
+while(True):
+    forward()

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bot"
+description = "Bot aldemarromel :D"
+readme = "README.md"
+version = "0.1.0"
+dependencies = [
+	"protobuf >= 3.20.0",
+	"pynmea2",
+	"pyserial",
+	"fastapi[standard]",
+	"geojson",
+	"smbus2",
+    "imutils"
+]
+requires-python = ">= 3.10"
+
+[project.scripts]
+get-gps-location = "gps.main:get_gps_location"
