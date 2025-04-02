@@ -405,13 +405,20 @@ async def get_sensor_data():
         print("hola")
         data = arduino.get_sensor_data('todos')
         if data:
+            class SensorData:
+                def __init__(self, **kwargs):
+                    for key, value in kwargs.items():
+                        setattr(self, key, value)
+                        
+            sensor_data = SensorData(**data)
+            
             return {
-            "status": "success",
-            "data": {
-                "turbidez": data[0],
-                "tds": data[1]
+                "status": "success",
+                "data": {
+                    "turbidez": sensor_data.turbidez,
+                    "tds": sensor_data.tds
+                }
             }
-        }
         else:
             raise HTTPException(status_code=500, detail="No se pudieron obtener los datos del sensor")
     except Exception as e:
