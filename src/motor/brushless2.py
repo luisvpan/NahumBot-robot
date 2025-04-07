@@ -6,6 +6,7 @@ ESC_PIN = 18
 esc = PWMOutputDevice(ESC_PIN, frequency=50)
 
 def set_esc_speed(speed):
+    print(esc)
     # Convertir el rango de velocidad de 0-100% a 0-180 (similar al Arduino)
     duty_cycle = speed / 100  # Escala a un valor entre 0.0 y 1.0
     esc.value = duty_cycle
@@ -19,7 +20,8 @@ def read_potentiometer():
 try:
     while True:
         pot_value = read_potentiometer()  # Leer el valor del potenciómetro
-        scaled_value = (pot_value / 1023) * 100  # Escalar el valor a un rango de 0-100%
+        scaled_value = (pot_value / 1023) * 100
+        print(scaled_value,"%")  # Escalar el valor a un rango de 0-100%
         set_esc_speed(scaled_value)  # Configurar la velocidad del ESC
         sleep(0.1)
 
