@@ -10,7 +10,7 @@ try:
         servo.angle = 0
         sleep(3)
 
-        servo.angle = 90
+        servo.angle = 45
         sleep(3)
 
 
