@@ -2,7 +2,7 @@ from gpiozero import PWMOutputDevice
 from time import sleep
 
 # Configuración del pin GPIO donde se conectará el ESC
-ESC_PIN = 12
+ESC_PIN = 18
 esc = PWMOutputDevice(ESC_PIN, frequency=50)
 
 def set_esc_speed(speed):
