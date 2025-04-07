@@ -3,7 +3,7 @@ from time import sleep
 
 # Configuración del pin GPIO donde se conectará el ESC
 ESC_PIN = 18
-servo = AngularServo(ESC_PIN, min_pulse=0.0006, max_pulse=0.0023)
+servo = AngularServo(ESC_PIN, 0.0006,0.0023)
 
 try:
     while True:
