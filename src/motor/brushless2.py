@@ -14,7 +14,7 @@ def set_esc_speed(speed):
 def read_potentiometer():
     # Aquí deberías leer el valor analógico del potenciómetro
     # Este código es genérico, necesitarás una biblioteca como `gpiozero` y un ADC (convertidor analógico-digital) para leer el potenciómetro.
-    pot_value = 512  # Suponiendo un valor fijo como ejemplo
+    pot_value = 1023  # Suponiendo un valor fijo como ejemplo
     return pot_value
 
 try:
