@@ -8,10 +8,10 @@ servo = AngularServo(ESC_PIN, min_pulse_width=0.0006, max_pulse_width=0.0023)
 try:
     while True:
         servo.angle = 0
-        sleep(3)
+        sleep(5)
 
         servo.angle = 45
-        sleep(3)
+        sleep(5)
 
 
 except KeyboardInterrupt:
