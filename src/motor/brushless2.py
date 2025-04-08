@@ -23,7 +23,7 @@ try:
         command = input("Ingresa un comando: ").lower()
 
         if command == 'w':  # Aumentar ángulo
-            current_angle += 90
+            current_angle += 10
             if current_angle > 90:  # Limitar al máximo de 90 grados
                 current_angle = 90
             servo360.angle = current_angle
@@ -31,7 +31,7 @@ try:
             sleep(0.5)
 
         elif command == 's':  # Disminuir ángulo
-            current_angle -= 90
+            current_angle -= 10
             if current_angle < -90:  # Limitar al mínimo de -90 grados
                 current_angle = -90
             servo360.angle = current_angle
