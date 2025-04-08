@@ -26,7 +26,7 @@ try:
         command = input("Ingresa un comando: ").lower()
 
         if command == 'w':  # Aumentar ángulo de ambos motores
-            current_angle += 2
+            current_angle += 10
             if current_angle > 90:
                 current_angle = 90
             servo1.angle = current_angle
@@ -35,7 +35,7 @@ try:
             sleep(0.5)
 
         elif command == 's':  # Disminuir ángulo de ambos motores
-            current_angle -= 2
+            current_angle -= 10
             if current_angle < -90:
                 current_angle = -90
             servo1.angle = current_angle
