@@ -1,70 +1,52 @@
-import RPi.GPIO as GPIO
+from gpiozero import AngularServo
 from time import sleep
+from gpiozero.pins.pigpio import PiGPIOFactory
+
+# Configuración de la fábrica PiGPIO para el control remoto del GPIO
+factory = PiGPIOFactory(host='localhost', port=8888)  # Aquí se corrigió el apóstrofo extra
 
 # Configuración del pin GPIO donde se conectará el ESC
 ESC_PIN = 18
 
-# Configuración del GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(ESC_PIN, GPIO.OUT)
-servo_pwm = GPIO.PWM(ESC_PIN, 50)  # Frecuencia de 50 Hz para el servo
-servo_pwm.start(0)  # Inicializar el servo en posición neutral
+# Inicializar el servo con el rango de pulsos adecuado
+servo360 = AngularServo(ESC_PIN, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
 
-# Función para establecer el ángulo del servo
-def set_angle(angle):
-    duty_cycle = (0.5 + (angle + 90) / 180 * 2) / 20 * 100  # Calcular ciclo de trabajo basado en el rango de pulsos
-    servo_pwm.ChangeDutyCycle(duty_cycle)
-
-# Inicializar ángulo actual
+# Inicializar el ángulo actual
 current_angle = 0
-set_angle(current_angle)
+servo360.angle = current_angle
 
-print("Usa las teclas WASD para mover el servo:")
-print("W: +10 grados, S: -10 grados, A: -45 grados, D: +45 grados. Pulsa 'q' para salir.")
+print("Controla el servo ingresando comandos:")
+print("'w': +90 grados, 's': -90 grados, 'q': salir.")
 
 try:
     while True:
-        key = input("Introduce una tecla: ").lower()  # Capturar entrada del teclado
+        command = input("Ingresa un comando: ").lower()
 
-        if key == 'w':
-            current_angle += 10
-            if current_angle > 90:  # Limitar el rango
+        if command == 'w':  # Aumentar ángulo
+            current_angle += 90
+            if current_angle > 90:  # Limitar al máximo de 90 grados
                 current_angle = 90
-            set_angle(current_angle)
+            servo360.angle = current_angle
             print(f"Ángulo actual: {current_angle}")
+            sleep(0.5)
 
-        elif key == 's':
-            current_angle -= 10
-            if current_angle < -90:  # Limitar el rango
+        elif command == 's':  # Disminuir ángulo
+            current_angle -= 90
+            if current_angle < -90:  # Limitar al mínimo de -90 grados
                 current_angle = -90
-            set_angle(current_angle)
+            servo360.angle = current_angle
             print(f"Ángulo actual: {current_angle}")
+            sleep(0.5)
 
-        elif key == 'a':
-            current_angle -= 45
-            if current_angle < -90:
-                current_angle = -90
-            set_angle(current_angle)
-            print(f"Ángulo actual: {current_angle}")
-
-        elif key == 'd':
-            current_angle += 45
-            if current_angle > 180:
-                current_angle = 180
-            set_angle(current_angle)
-            print(f"Ángulo actual: {current_angle}")
-
-        elif key == 'q':  # Salir del programa
+        elif command == 'q':  # Salir del bucle
             print("Saliendo del control del servo.")
             break
 
         else:
-            print("Tecla inválida. Usa W, A, S, D o 'q'.")
+            print("Comando no válido. Usa 'w', 's' o 'q'.")
 
 except KeyboardInterrupt:
     print("Interrupción manual. Saliendo...")
 
 finally:
-    set_angle(0)  # Desactivar el servo
-    servo_pwm.stop()
-    GPIO.cleanup()
+    servo360.angle = None  # Desactivar el servo
