@@ -16,7 +16,7 @@ def set_angle(angle):
     servo_pwm.ChangeDutyCycle(duty_cycle)
 
 # Inicializar ángulo actual
-current_angle = 90
+current_angle = 0
 set_angle(current_angle)
 
 print("Usa las teclas WASD para mover el servo:")
@@ -44,8 +44,8 @@ try:
             current_angle -= 45
             if current_angle < -90:
                 current_angle = -90
-            set_angle(-90)
-            print(f"Ángulo actual: {-90}")
+            set_angle(current_angle)
+            print(f"Ángulo actual: {current_angle}")
 
         elif key == 'd':
             current_angle += 45
