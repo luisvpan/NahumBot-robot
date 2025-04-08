@@ -10,6 +10,6 @@ servo = AngularServo(ESC_PIN, min_pulse_width=0.0006, max_pulse_width=0.0023, pi
 for i in range(-90, 90):
     print(i)
     servo.angle = i
-    sleep(0.5)
+    sleep(2)
 
 servo.angle = 42
