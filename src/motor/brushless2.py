@@ -25,7 +25,7 @@ print("W: +10 grados, S: -10 grados, A: -45 grados, D: +45 grados. Pulsa 'q' par
 try:
     while True:
         key = input("Introduce una tecla: ").lower()  # Capturar entrada del teclado
-
+        print(key)
         if key == 'w':
             current_angle += 10
             if current_angle > 90:  # Limitar el rango
