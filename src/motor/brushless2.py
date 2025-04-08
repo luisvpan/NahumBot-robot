@@ -14,50 +14,33 @@ servo1 = AngularServo(ESC_PIN1, min_pulse_width=0.5/1000, max_pulse_width=2.5/10
 servo2 = AngularServo(ESC_PIN2, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
 
 # Inicializar los ángulos actuales
-current_angle1 = 0
-current_angle2 = 0
-servo1.angle = current_angle1
-servo2.angle = current_angle2
+current_angle = 0
+servo1.angle = current_angle
+servo2.angle = current_angle
 
-print("Controla los servos ingresando comandos:")
-print("'w': +10° motor 1, 's': -10° motor 1")
-print("'e': +10° motor 2, 'd': -10° motor 2")
-print("'q': salir.")
+print("Controla ambos servos ingresando comandos:")
+print("'w': +10° ambos motores, 's': -10° ambos motores, 'q': salir.")
 
 try:
     while True:
         command = input("Ingresa un comando: ").lower()
 
-        if command == 'w':  # Aumentar ángulo del motor 1
-            current_angle1 += 10
-            if current_angle1 > 90:
-                current_angle1 = 90
-            servo1.angle = current_angle1
-            print(f"Ángulo actual motor 1: {current_angle1}")
+        if command == 'w':  # Aumentar ángulo de ambos motores
+            current_angle += 10
+            if current_angle > 90:
+                current_angle = 90
+            servo1.angle = current_angle
+            servo2.angle = current_angle
+            print(f"Ángulo actual ambos motores: {current_angle}")
             sleep(0.5)
 
-        elif command == 's':  # Disminuir ángulo del motor 1
-            current_angle1 -= 10
-            if current_angle1 < -90:
-                current_angle1 = -90
-            servo1.angle = current_angle1
-            print(f"Ángulo actual motor 1: {current_angle1}")
-            sleep(0.5)
-
-        elif command == 'e':  # Aumentar ángulo del motor 2
-            current_angle2 += 10
-            if current_angle2 > 90:
-                current_angle2 = 90
-            servo2.angle = current_angle2
-            print(f"Ángulo actual motor 2: {current_angle2}")
-            sleep(0.5)
-
-        elif command == 'd':  # Disminuir ángulo del motor 2
-            current_angle2 -= 10
-            if current_angle2 < -90:
-                current_angle2 = -90
-            servo2.angle = current_angle2
-            print(f"Ángulo actual motor 2: {current_angle2}")
+        elif command == 's':  # Disminuir ángulo de ambos motores
+            current_angle -= 10
+            if current_angle < -90:
+                current_angle = -90
+            servo1.angle = current_angle
+            servo2.angle = current_angle
+            print(f"Ángulo actual ambos motores: {current_angle}")
             sleep(0.5)
 
         elif command == 'q':  # Salir del bucle
@@ -65,7 +48,7 @@ try:
             break
 
         else:
-            print("Comando no válido. Usa 'w', 's', 'e', 'd' o 'q'.")
+            print("Comando no válido. Usa 'w', 's' o 'q'.")
 
 except KeyboardInterrupt:
     print("Interrupción manual. Saliendo...")
