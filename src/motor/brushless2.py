@@ -6,7 +6,7 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 factory = PiGPIOFactory(host='localhost', port=8888)  # Aquí se corrigió el apóstrofo extra
 
 # Configuración del pin GPIO donde se conectará el ESC
-ESC_PIN = 18
+ESC_PIN = 13
 
 # Inicializar el servo con el rango de pulsos adecuado
 servo360 = AngularServo(ESC_PIN, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
