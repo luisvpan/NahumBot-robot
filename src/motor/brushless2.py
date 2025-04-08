@@ -49,8 +49,8 @@ try:
 
         elif key == 'd':
             current_angle += 45
-            if current_angle > 90:
-                current_angle = 90
+            if current_angle > 180:
+                current_angle = 180
             set_angle(current_angle)
             print(f"Ángulo actual: {current_angle}")
 
