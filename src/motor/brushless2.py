@@ -1,5 +1,5 @@
 from gpiozero import AngularServo
-from time import sleep, time
+from time import sleep
 from gpiozero.pins.pigpio import PiGPIOFactory
 
 # Configuración de la fábrica PiGPIO para el control remoto del GPIO
@@ -19,12 +19,10 @@ servo1.angle = current_angle
 servo2.angle = current_angle
 
 print("Controla ambos servos ingresando comandos:")
-print("'w': +10° ambos motores, 's': -10° ambos motores.")
-
-start_time = time()  # Registrar el tiempo de inicio
+print("'w': +10° ambos motores, 's': -10° ambos motores, 'q': salir.")
 
 try:
-    while time() - start_time < 5:  # Ejecutar el código solo por 5 segundos
+    while True:
         command = input("Ingresa un comando: ").lower()
 
         if command == 'w':  # Aumentar ángulo de ambos motores
@@ -45,7 +43,12 @@ try:
             print(f"Ángulo actual ambos motores: {current_angle}")
             sleep(0.5)
 
-    print("Tiempo terminado. Saliendo del control de los servos.")
+        elif command == 'q':  # Salir del bucle
+            print("Saliendo del control de los servos.")
+            break
+
+        else:
+            print("Comando no válido. Usa 'w', 's' o 'q'.")
 
 except KeyboardInterrupt:
     print("Interrupción manual. Saliendo...")
