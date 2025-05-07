@@ -19,37 +19,57 @@ servo1.angle = current_angle
 servo2.angle = current_angle
 
 print("Controla ambos servos ingresando comandos:")
-print("'forward': avanzar, 'backward': retroceder, 'left': girar a la izquierda, 'right': girar a la derecha, 'stop': detener, 'q': salir.")
+print("'w': +10° ambos motores, 's': -10° ambos motores, 'a': izquierda, 'd': derecha, 'stop': detener, 'q': salir.")
 
-def forward():
-    global current_angle
-    current_angle = 50
-    servo1.angle = current_angle
-    servo2.angle = current_angle
-    print(f"Ángulo actual ambos motores: {current_angle}")
+try:
+    while True:
+        command = input("Ingresa un comando: ").lower()
 
-def backward():
-    global current_angle
-    current_angle = -50        
-    servo1.angle = current_angle
-    servo2.angle = current_angle
-    print(f"Ángulo actual ambos motores: {current_angle}")
+        if command == 'forward':  # Aumentar ángulo de ambos motores
+            current_angle = 50
+            servo1.angle = current_angle
+            servo2.angle = current_angle
+            print(f"Ángulo actual ambos motores: {current_angle}")
+            sleep(0.5)
 
-def stop_motors():
-    global current_angle
-    current_angle = 0
-    servo1.angle = current_angle
-    servo2.angle = current_angle
-    print(f"Ángulo actual ambos motores: {current_angle}")
+        elif command == 'backward':  # Disminuir ángulo de ambos motores
+            current_angle = -50        
+            servo1.angle = current_angle
+            servo2.angle = current_angle
+            print(f"Ángulo actual ambos motores: {current_angle}")
+            sleep(0.5)
 
-def turn_left():
-    servo1.angle = 50
-    servo2.angle = 20  # Dirección opuesta
-    print("Moviendo a la izquierda")
+        elif command == 'stop':  # Detener ambos motores
+            current_angle = 0
+            servo1.angle = current_angle
+            servo2.angle = current_angle
+            print(f"Ángulo actual ambos motores: {current_angle}")
+            sleep(0.5)
 
-def turn_right():
-    servo1.angle = 20
-    servo2.angle = 50  # Dirección opuesta
-    print("Moviendo a la derecha")
+        elif command == 'left':  # Mover a la izquierda
+            current_angle = -30  # Ajusta el ángulo según necesidad
+            servo1.angle = current_angle
+            servo2.angle = -current_angle  # Dirección opuesta
+            print("Moviendo a la izquierda")
+            sleep(0.5)
 
+        elif command == 'right':  # Mover a la derecha
+            current_angle = 30  # Ajusta el ángulo según necesidad
+            servo1.angle = current_angle
+            servo2.angle = -current_angle  # Dirección opuesta
+            print("Moviendo a la derecha")
+            sleep(0.5)
 
+        elif command == 'q':  # Salir del bucle
+            print("Saliendo del control de los servos.")
+            break
+
+        else:
+            print("Comando no válido. Usa 'w', 's', 'a', 'd', 'stop' o 'q'.")
+
+except KeyboardInterrupt:
+    print("Interrupción manual. Saliendo...")
+
+finally:
+    servo1.angle = None  # Desactivar el motor 1
+    servo2.angle = None  # Desactivar el motor 2
