@@ -88,6 +88,7 @@ def control_motors(action):
             turn_right()
         elif action == "stop":
             #stop()
+            print("Entro en stop del command")
             stop_motors()
         else:
             stop_motors()
