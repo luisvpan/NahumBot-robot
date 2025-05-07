@@ -35,7 +35,7 @@ def backward():
     servo2.angle = current_angle
     print(f"Ángulo actual ambos motores: {current_angle}")
 
-def stop_motors():
+def stop():
     global current_angle
     print("STOP EN BRUSHLESS MOVEMENT")
     current_angle = 0

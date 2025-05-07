@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # from gps.main import get_gps_location
 from camera.main import get_image
 from constants import is_simulation_mode, simulated_base64_image
-from motor.brushless_movement import backward, forward, turn_left, turn_right, stop_motors
+from motor.brushless_movement import backward, forward, turn_left, turn_right, stop
 from motor.ball_follower import dogStep
 from server.map_mode import calculate_distance, calculate_bearing
 import random
@@ -87,9 +87,9 @@ def control_motors(action):
         elif action == "turn_right":
             turn_right()
         elif action == "stop":
-            #stop()
+            stop()
             print("Entro en stop del command")
-            stop_motors()
+
         else:
             stop_motors()
         time.sleep(0.1)  # Adjust the sleep time as needed
