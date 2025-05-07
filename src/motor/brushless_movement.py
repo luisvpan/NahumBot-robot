@@ -53,9 +53,6 @@ def turn_right():
     print("Moviendo a la derecha")
 
 
-except KeyboardInterrupt:
-    print("Interrupción manual. Saliendo...")
-
 finally:
     servo1.angle = None  # Desactivar el motor 1
     servo2.angle = None  # Desactivar el motor 2

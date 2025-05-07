@@ -79,13 +79,13 @@ def control_motors(action):
         else:
         '''          
         if action == "forward":
-            forward(movement_speed, movement_speed)
+            forward()
         elif action == "backward":
-            backward(movement_speed, movement_speed)
+            backward()
         elif action == "turn_left":
-            turn_left(movement_speed, 0)
+            turn_left()
         elif action == "turn_right":
-            turn_right(0, movement_speed)
+            turn_right()
         elif action == "stop":
             #stop()
             stop_motors()
