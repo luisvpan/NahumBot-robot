@@ -44,13 +44,13 @@ def stop():
     print(f"Ángulo actual ambos motores: {current_angle}")
 
 def turn_left():
-    servo1.angle = 20
+    servo1.angle = 0
     servo2.angle = 50  # Dirección opuesta
     print("Moviendo a la izquierda")
 
 def turn_right():
     servo1.angle = 50
-    servo2.angle = 20  # Dirección opuesta
+    servo2.angle = 0  # Dirección opuesta
     print("Moviendo a la derecha")
 
 
