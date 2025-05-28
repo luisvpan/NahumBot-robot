@@ -56,7 +56,7 @@ class ArduinoSensorInterface:
           
             
         else:
-            valid_types = ['tds', 'turbidez', 'todos', 'bomba estado', 'llenar', 'vaciar', 'ninguno']
+            valid_types = ['tds', 'turbidez', 'todos', 'bombaestado', 'llenar', 'vaciar', 'ninguno']
             if sensor_type.lower() not in valid_types:
                 print(f"Tipo de sensor no válido. Opciones: {', '.join(valid_types)}")
                 return None
