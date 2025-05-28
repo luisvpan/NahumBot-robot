@@ -482,7 +482,7 @@ async def get_sensor_data():
 
 
 @app.put("/change-water-bomb-mode")
-async def change_water_bomb_mode(mode: WaterBombMode):
+async def change_water_bomb_mode(mode):
     try:
         # Suponiendo que arduino.get_sensor_data(mode.mode) es la llamada correcta
         data = arduino.get_sensor_data(mode)
