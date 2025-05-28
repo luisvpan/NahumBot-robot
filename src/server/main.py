@@ -54,6 +54,7 @@ target_coords = {
     "latitude": 0,
     "longitude": 0
 }
+
 target_orientation = 0
 
 current_coords = {
@@ -204,7 +205,19 @@ def stop_aux():
     global aux_running
     aux_running = False
 
+
 def get_current_status():
+    data = arduino.get_sensor_data('bomba estado')
+    print(data)
+    if data:
+        class SensorData:
+            def __init__(self, **kwargs):
+                for key, value in kwargs.items():
+                    setattr(self, key, value)
+                        
+    sensor_data = SensorData(**data)
+
+    sensor_data.bombIsOn = sensor_data.bombIsOn.lower() == "on"
     return {
         "movement_mode": movement_mode,
         "running": running,
@@ -213,6 +226,7 @@ def get_current_status():
             "latitude": target_coords["latitude"],
             "longitude": target_coords["longitude"]
         },
+        "bombIsOn": sensor_data.bombIsOn,
         "target_orientation": target_orientation
     }
 
@@ -344,6 +358,41 @@ async def control_robot(command: Command):
             "current_status": get_current_status()
         }
 
+
+# Control bot endpoint
+@app.post("/control-robot")
+async def control_robot(command: Command):
+    print("control_robot")
+    print(command)
+
+    global motor_thread
+    action = command.action.lower()
+
+    '''
+    if (is_simulation_mode):
+        return {
+            "status": "success",
+            "action": action,
+            "current_status": get_current_status()
+        }
+    '''
+
+    # Stop any ongoing motor control before starting a new one
+    if motor_thread is not None and motor_thread.is_alive():
+        stop_motors()
+        motor_thread.join()  # Wait for the thread to finish
+
+    if (movement_mode == "control"):
+        # Start a new thread to control the motors
+        motor_thread = threading.Thread(target=control_motors, args=(action,))
+        motor_thread.start()
+
+    return {
+            "status": "success",
+            "action": action,
+            "current_status": get_current_status()
+        }
+
 """""
 @app.websocket('/current-location')
 async def current_location(websocket: WebSocket):
@@ -417,7 +466,13 @@ async def get_sensor_data():
                 "status": "success",
                 "data": {
                     "turbidez": sensor_data.turbidez,
-                    "tds": sensor_data.tds
+                    "tds": sensor_data.tds,
+                    "ph": random.uniform(0, 14),
+                    "temperaturaAfuera": random.uniform(0, 100),
+                    "temperaturaSumergido": random.uniform(0, 100),
+                    "rayosUV": random.uniform(0, 100),
+                    "latitud": random.uniform(-90, 90),
+                    "longitud": random.uniform(-180, 180),
                 }
             }
         else:
@@ -426,3 +481,15 @@ async def get_sensor_data():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.put("/change-water-bomb-mode")
+async def change_water_bomb_mode(mode: str):
+    try:
+        data = arduino.get_sensor_data(mode)
+        return {
+            "status": "success",
+            "mode": mode
+        }
+        else:
+            raise HTTPException(status_code=500, detail="No se pudieron obtener los datos del sensor")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
