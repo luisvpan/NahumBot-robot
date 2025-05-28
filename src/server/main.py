@@ -209,15 +209,6 @@ def stop_aux():
 def get_current_status():
     data = arduino.get_sensor_data('bomba estado')
     print(data)
-    if data:
-        class SensorData:
-            def __init__(self, **kwargs):
-                for key, value in kwargs.items():
-                    setattr(self, key, value)
-                        
-    sensor_data = SensorData(**data)
-
-    sensor_data.bombIsOn = sensor_data.bombIsOn.lower() == "on"
     return {
         "movement_mode": movement_mode,
         "running": running,
@@ -226,7 +217,6 @@ def get_current_status():
             "latitude": target_coords["latitude"],
             "longitude": target_coords["longitude"]
         },
-        "bombIsOn": sensor_data.bombIsOn,
         "target_orientation": target_orientation
     }
 
