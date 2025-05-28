@@ -208,7 +208,18 @@ def stop_aux():
 
 def get_current_status():
     data = arduino.get_sensor_data('bombaestado')
-    
+    print({
+        "movement_mode": movement_mode,
+        "running": running,
+        "movement_speed": movement_speed,
+        "target_coords": {
+            "latitude": target_coords["latitude"],
+            "longitude": target_coords["longitude"]
+        },
+        "bomb1": data.bomba1,
+        "bomb2": data.bomba2,
+        "target_orientation": target_orientation
+    })
     return {
         "movement_mode": movement_mode,
         "running": running,
