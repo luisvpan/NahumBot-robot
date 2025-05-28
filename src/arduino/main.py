@@ -75,8 +75,17 @@ class ArduinoSensorInterface:
                 response = self.serial_conn.readline().decode('utf-8').strip()
 
                 if sensor_type == 'bombaestado':
-                    # Procesa el estado de las bombas
-                    print("response: ", response)
+                    response = response.strip()
+                    result = {}
+                    
+                    # Divide la respuesta en partes
+                    bombas = response.split(", ")
+                    
+                    # Procesa cada bomba y su estado
+                    for bomba in bombas:
+                        nombre, estado = bomba.split(": ")
+                        result[nombre.lower().replace(" ", "")] = estado.strip()
+                    
                     return result
 
                 if ':' in response:
