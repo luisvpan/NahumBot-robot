@@ -76,10 +76,7 @@ class ArduinoSensorInterface:
 
                 if sensor_type == 'bombaestado':
                     # Procesa el estado de las bombas
-                    estados = value.split(', ')
-                    for estado in estados:
-                        bomba_key, bomba_value = estado.split(': ')
-                        result[bomba_key.lower()] = bomba_value.lower() 
+                    print("response: ", response)
                     return result
 
                 if ':' in response:
