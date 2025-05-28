@@ -73,6 +73,15 @@ class ArduinoSensorInterface:
             result = {}
             while self.serial_conn.in_waiting:
                 response = self.serial_conn.readline().decode('utf-8').strip()
+
+                if sensor_type == 'bombaestado':
+                    # Procesa el estado de las bombas
+                    estados = value.split(', ')
+                    for estado in estados:
+                        bomba_key, bomba_value = estado.split(': ')
+                        result[bomba_key.lower()] = bomba_value.lower() 
+                    return result
+
                 if ':' in response:
                     key, value = response.split(':', 1)
                     key = key.lower().strip()  # Elimina espacios en blanco
@@ -82,12 +91,7 @@ class ArduinoSensorInterface:
                         result[key] = float(value)
                     elif key == 'turbidez':
                         result[key] = float(value)
-                    elif key == 'bombaestado':
-                        # Procesa el estado de las bombas
-                        estados = value.split(', ')
-                        for estado in estados:
-                            bomba_key, bomba_value = estado.split(': ')
-                            result[bomba_key.lower()] = bomba_value.lower()  # Almacena el estado de las bombas
+                     # Almacena el estado de las bombas
                     else:
                         result[key] = int(value)  # Para otros sensores, convierte a int
                 time.sleep(0.1)
