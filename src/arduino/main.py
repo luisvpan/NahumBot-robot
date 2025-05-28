@@ -76,9 +76,7 @@ class ArduinoSensorInterface:
                 response = self.serial_conn.readline().decode('utf-8').strip()
                 if ':' in response:
                     key, value = response.split(':', 1)
-                    key = key.lower().strip()  # Elimina espacios en blanco
-                    value = value.strip()
-                    print('key: ', key)  # Elimina espacios en blanco
+                    print('key: ', key)
                     if key == 'tds':
                         result[key] = float(value)
                     elif key == 'bomba estado':
