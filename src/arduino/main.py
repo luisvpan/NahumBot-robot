@@ -73,18 +73,18 @@ class ArduinoSensorInterface:
             # Procesa los datos recibidos
             result = {}
             while self.serial_conn.in_waiting:
-            response = self.serial_conn.readline().decode('utf-8').strip()
-            if ':' in response:
-                key, value = response.split(':', 1)
-                key = key.lower().strip()  # Elimina espacios en blanco
-                value = value.strip()  # Elimina espacios en blanco
-                if key == 'tds':
-                    result[key] = float(value)
-                elif key == 'bomba estado':
-                    result[key] = value  # Mantiene el estado como cadena
-                else:
-                    result[key] = int(value)  # Para otros sensores, convierte a int
-            time.sleep(0.1)
+                response = self.serial_conn.readline().decode('utf-8').strip()
+                if ':' in response:
+                    key, value = response.split(':', 1)
+                    key = key.lower().strip()  # Elimina espacios en blanco
+                    value = value.strip()  # Elimina espacios en blanco
+                    if key == 'tds':
+                        result[key] = float(value)
+                    elif key == 'bomba estado':
+                        result[key] = value  # Mantiene el estado como cadena
+                    else:
+                        result[key] = int(value)  # Para otros sensores, convierte a int
+                time.sleep(0.1)
             
             return result
             
