@@ -41,20 +41,19 @@ class ArduinoSensorInterface:
         Solicita datos de un sensor específico o de todos los sensores.
         
         Args:
-            sensor_type (str): Tipo de sensor ('tds', 'turbidez', 'todos')
+            sensor_type (str): Tipo de sensor ('tds', 'turbidez', 'todos', 'bombaestado')
             
         Returns:
             dict: Diccionario con los valores de los sensores solicitados
         """
 
         if (is_simulation_mode):
-            turbidez = (random.random()) # Variación controlada para latitud
-            tds = (random.random())
-            
-           
-            return turbidez, tds
-          
-            
+            if sensor_type == 'bombaestado':
+                return {'bomba1': 'on', 'bomba2': 'on'}  # Simulación de estado de bombas
+            turbidez = random.random()  # Variación controlada para turbidez
+            tds = random.random()
+            return {'turbidez': turbidez, 'tds': tds}
+        
         else:
             valid_types = ['tds', 'turbidez', 'todos', 'bombaestado', 'llenar', 'vaciar', 'ninguno']
             if sensor_type.lower() not in valid_types:
@@ -81,13 +80,20 @@ class ArduinoSensorInterface:
                     print('key: ', key)
                     if key == 'tds':
                         result[key] = float(value)
+                    elif key == 'turbidez':
+                        result[key] = float(value)
                     elif key == 'bombaestado':
-                        result[key] = value  # Mantiene el estado como cadena
+                        # Procesa el estado de las bombas
+                        estados = value.split(', ')
+                        for estado in estados:
+                            bomba_key, bomba_value = estado.split(': ')
+                            result[bomba_key.lower()] = bomba_value.lower()  # Almacena el estado de las bombas
                     else:
                         result[key] = int(value)  # Para otros sensores, convierte a int
                 time.sleep(0.1)
             
             return result
+
             
     def close(self):
         """Cierra la conexión serial"""
