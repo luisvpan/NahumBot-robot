@@ -27,14 +27,17 @@ bool stringComplete = false;  // Bandera para indicar cuando el string está com
 // Funciones para controlar las bombas de agua
 void setModo(String modo) {
   if (modo.equalsIgnoreCase("ninguno")) {
+    Serial.println("ninguno");
     digitalWrite(BombaPin1, HIGH);
     digitalWrite(BombaPin2, HIGH);
     Serial.println("Modo: NINGUNO - Ambas bombas están apagadas");
   } else if (modo.equalsIgnoreCase("vaciar")) {
+    Serial.println("vaciar");
     digitalWrite(BombaPin1, HIGH);
     digitalWrite(BombaPin2, LOW);
     Serial.println("Modo: VACIAR - Bomba 1 apagada, Bomba 2 encendida");
   } else if (modo.equalsIgnoreCase("llenar")) {
+    Serial.println("llenar");
     digitalWrite(BombaPin1, LOW);
     digitalWrite(BombaPin2, HIGH);
     Serial.println("Modo: LLENAR - Bomba 1 encendida, Bomba 2 apagada");
@@ -71,6 +74,8 @@ void setup() {
   pinMode(BombaPin1, OUTPUT);
   pinMode(BombaPin2, OUTPUT);
 
+  digitalWrite(BombaPin1, HIGH);
+  digitalWrite(BombaPin2, HIGH);
   // Reserva 200 bytes para el inputString
   inputString.reserve(200);
 
@@ -91,6 +96,17 @@ void loop() {
     }
   }
 
+  // Leer datos del puerto serie
+  while (Serial.available()) {
+    char incomingChar = (char)Serial.read();
+    inputString += incomingChar;
+
+    // Verifica si se ha recibido un salto de línea (indica el final del comando)
+    if (incomingChar == '\n') {
+      stringComplete = true;
+    }
+  }
+
   // Procesa los comandos seriales cuando están completos
   if (stringComplete) {
     inputString.trim();
@@ -103,8 +119,7 @@ void loop() {
       sendGY87Values();
     } else if (inputString.equalsIgnoreCase("todos")) {
       sendAllSensors();
-    } else if (inputString.equalsIgnoreCase("bomba estado")) {
-      Serial.print("BOMBA: ");
+    } else if (inputString.equalsIgnoreCase("bombaestado")) {
       Serial.println(estadoBomba());
     } else if (inputString.equalsIgnoreCase("ninguno") || inputString.equalsIgnoreCase("vaciar") || inputString.equalsIgnoreCase("llenar")) {
       setModo(inputString);
@@ -116,6 +131,7 @@ void loop() {
     stringComplete = false;
   }
 }
+
 
 // Función para calcular y enviar el valor TDS
 void sendTDSValue() {
