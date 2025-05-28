@@ -75,6 +75,7 @@ class ArduinoSensorInterface:
             while self.serial_conn.in_waiting:
                 response = self.serial_conn.readline().decode('utf-8').strip()
                 if ':' in response:
+                    print(key)
                     key, value = response.split(':', 1)
                     key = key.lower().strip()  # Elimina espacios en blanco
                     value = value.strip()  # Elimina espacios en blanco
