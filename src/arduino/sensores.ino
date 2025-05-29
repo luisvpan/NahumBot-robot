@@ -27,20 +27,14 @@ bool stringComplete = false;  // Bandera para indicar cuando el string está com
 // Funciones para controlar las bombas de agua
 void setModo(String modo) {
   if (modo.equalsIgnoreCase("ninguno")) {
-    Serial.println("ninguno");
     digitalWrite(BombaPin1, HIGH);
     digitalWrite(BombaPin2, HIGH);
-    Serial.println("Modo: NINGUNO - Ambas bombas están apagadas");
   } else if (modo.equalsIgnoreCase("vaciar")) {
-    Serial.println("vaciar");
     digitalWrite(BombaPin1, HIGH);
     digitalWrite(BombaPin2, LOW);
-    Serial.println("Modo: VACIAR - Bomba 1 apagada, Bomba 2 encendida");
   } else if (modo.equalsIgnoreCase("llenar")) {
-    Serial.println("llenar");
     digitalWrite(BombaPin1, LOW);
     digitalWrite(BombaPin2, HIGH);
-    Serial.println("Modo: LLENAR - Bomba 1 encendida, Bomba 2 apagada");
   } else {
     Serial.println("Modo no reconocido. Comandos disponibles: 'ninguno', 'vaciar', 'llenar'");
   }
