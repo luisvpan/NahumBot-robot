@@ -80,7 +80,7 @@ class ArduinoSensorInterface:
                     
                     # Divide la respuesta en partes
                     bombas = response.split(", ")
-                    
+                   
                     # Procesa cada bomba y su estado
                     for bomba in bombas:
                         nombre, estado = bomba.split(": ")
