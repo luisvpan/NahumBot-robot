@@ -463,6 +463,7 @@ async def get_sensor_data():
     try:
         print("hola")
         data = arduino.get_sensor_data('todos')
+        print(data)
         if data:
             class SensorData:
                 def __init__(self, **kwargs):

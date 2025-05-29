@@ -35,8 +35,6 @@ void setModo(String modo) {
   } else if (modo.equalsIgnoreCase("llenar")) {
     digitalWrite(BombaPin1, LOW);
     digitalWrite(BombaPin2, HIGH);
-  } else {
-    Serial.println("Modo no reconocido. Comandos disponibles: 'ninguno', 'vaciar', 'llenar'");
   }
 }
 
@@ -72,10 +70,6 @@ void setup() {
   digitalWrite(BombaPin2, HIGH);
   // Reserva 200 bytes para el inputString
   inputString.reserve(200);
-
-  // Mensaje de inicio
-  Serial.println("Sistema de sensores iniciado. Envía comandos para obtener lecturas.");
-  Serial.println("Comandos disponibles: 'tds', 'turbidez', 'gy87', 'todos', 'bomba on', 'bomba off', 'bomba estado'");
 }
 
 void loop() {
@@ -117,8 +111,6 @@ void loop() {
       Serial.println(estadoBomba());
     } else if (inputString.equalsIgnoreCase("ninguno") || inputString.equalsIgnoreCase("vaciar") || inputString.equalsIgnoreCase("llenar")) {
       setModo(inputString);
-    } else {
-      Serial.println("Comando no reconocido. Comandos disponibles: 'tds', 'turbidez', 'gy87', 'todos', 'bomba on', 'bomba off', 'bomba estado'");
     }
 
     inputString = "";
@@ -151,10 +143,7 @@ void sendTurbidityValue() {
 
 // Función para enviar los valores del sensor GY-87
 void sendGY87Values() {
-  if (!bmp.begin()) {
-    Serial.println("ERROR: No se pudo inicializar el BMP180");
-    return;
-  }
+  if (!bmp.begin()) return
 
   float temperatura = bmp.readTemperature();
   float presion = bmp.readPressure() / 100.0;
