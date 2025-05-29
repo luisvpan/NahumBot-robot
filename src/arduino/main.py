@@ -84,6 +84,8 @@ class ArduinoSensorInterface:
                     # Procesa cada bomba y su estado
                     for bomba in bombas:
                         nombre, estado = bomba.split(": ")
+                        print("nombre ", nombre)
+                        print("estado ", estado)
                         result[nombre.lower().replace(" ", "")] = estado.strip()
                     
                     return result
