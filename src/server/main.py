@@ -26,6 +26,9 @@ arduino = ArduinoSensorInterface()
 class Command(BaseModel):
     action: str
 
+class WaterBombMode(BaseModel):
+    mode: str
+
 class CommandSpeed(BaseModel):
     movement_speed: int
 
@@ -471,16 +474,15 @@ async def get_sensor_data():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.put("/change-water-bomb-mode")
-async def change_water_bomb_mode(mode):
-    print("Entro")
-    try:
-        print("mode",mode)
-        # Suponiendo que arduino.get_sensor_data(mode.mode) es la llamada correcta
-        data = arduino.get_sensor_data(mode)
-        return {
-            "status": "success",
-            "mode": mode
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+ @app.put("/change-water-bomb-mode")
+   async def change_water_bomb_mode(mode: WaterBombMode):
+       print("Entro")
+       try:
+           print("mode", mode)
+           data = arduino.get_sensor_data(mode.mode)  # Asegúrate de acceder a la propiedad correcta
+           return {
+               "status": "success",
+               "mode": mode.mode
+           }
+       except Exception as e:
+           raise HTTPException(status_code=500, detail=str(e))
