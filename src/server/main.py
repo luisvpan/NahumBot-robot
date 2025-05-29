@@ -212,6 +212,21 @@ def stop_aux():
 def get_current_status():
     data = arduino.get_sensor_data('bombaestado')
     print(data)
+    
+    if not data:  # Verifica si data es un diccionario vacío
+        return {
+            "movement_mode": movement_mode,
+            "running": running,
+            "movement_speed": movement_speed,
+            "target_coords": {
+                "latitude": target_coords["latitude"],
+                "longitude": target_coords["longitude"]
+            },
+            "bomb1": "off",  # Retorna "off" si data está vacío
+            "bomb2": "off",  # Retorna "off" si data está vacío
+            "target_orientation": target_orientation
+        }
+    
     return {
         "movement_mode": movement_mode,
         "running": running,
@@ -220,8 +235,8 @@ def get_current_status():
             "latitude": target_coords["latitude"],
             "longitude": target_coords["longitude"]
         },
-        "bomb1": data['bomba1'],  # Accessing as a dictionary key
-        "bomb2": data['bomba2'],  # Accessing as a dictionary key
+        "bomb1": data['bomba1'],  # Accediendo como una clave de diccionario
+        "bomb2": data['bomba2'],  # Accediendo como una clave de diccionario
         "target_orientation": target_orientation
     }
 # Example usage in your FastAPI endpoint
