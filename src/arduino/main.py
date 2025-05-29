@@ -73,7 +73,7 @@ class ArduinoSensorInterface:
             result = {}
             while self.serial_conn.in_waiting:
                 response = self.serial_conn.readline().decode('utf-8').strip()
-
+                print("response: ",response)
                 if sensor_type == 'bombaestado':
                     response = response.strip()
                     result = {}
