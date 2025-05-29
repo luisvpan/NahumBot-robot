@@ -478,7 +478,7 @@ async def get_sensor_data():
 async def change_water_bomb_mode(mode: WaterBombMode):
     print("Entro")
     try:
-        print("mode", mode)
+        print(mode.mode)
         data = arduino.get_sensor_data(mode.mode)  # Asegúrate de acceder a la propiedad correcta
         return {
             "status": "success",
