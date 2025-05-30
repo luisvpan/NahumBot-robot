@@ -39,7 +39,7 @@ def get_gps_location():
 	if (is_simulation_mode):
 		return generate_simulated_gps_update()
 
-	port="/dev/ttyAMA0"
+	port="/dev/ttyACM0"
 	ser=serial.Serial(port, baudrate=9600, timeout=0.5)
 	sio= io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
