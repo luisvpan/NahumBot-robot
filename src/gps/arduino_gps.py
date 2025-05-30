@@ -46,5 +46,3 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
             ser.close()  # Asegúrate de cerrar el puerto serial si está abierto
         print("Puerto serial cerrado.")
 
-# Llama a la función
-read_gps_from_serial()
