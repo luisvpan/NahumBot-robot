@@ -16,6 +16,7 @@ import random
 import cv2
 import json
 from arduino.main import ArduinoSensorInterface
+from waterbomb.waterbomb import bomb_mode_empty, bomb_mode_fill, bomb_mode_none
 
 app = FastAPI()
 camera = cv2.VideoCapture(0)
@@ -47,6 +48,7 @@ import time
 import math
 
 # Global variable to control the motor state
+
 running = False
 motor_thread = None
 aux_thread = None
@@ -57,6 +59,7 @@ target_coords = {
     "latitude": 0,
     "longitude": 0
 }
+bomb_mode = "none"  # Estado inicial de las bombas
 
 target_orientation = 0
 
@@ -210,20 +213,7 @@ def stop_aux():
 
 
 def get_current_status():
- 
-    
-    if not data:  # Verifica si data es un diccionario vacío
-        return {
-            "movement_mode": movement_mode,
-            "running": running,
-            "movement_speed": movement_speed,
-            "target_coords": {
-                "latitude": target_coords["latitude"],
-                "longitude": target_coords["longitude"]
-            },
-           "target_orientation": target_orientation
-        }
-    
+    global bomb_mode  # Acceder a la variable global bomb_mode
     return {
         "movement_mode": movement_mode,
         "running": running,
@@ -232,10 +222,10 @@ def get_current_status():
             "latitude": target_coords["latitude"],
             "longitude": target_coords["longitude"]
         },
-        "bomb1": data['bomba1'],  # Accediendo como una clave de diccionario
-        "bomb2": data['bomba2'],  # Accediendo como una clave de diccionario
+        "bomb_mode": bomb_mode,  # Agregar el estado de las bombas
         "target_orientation": target_orientation
     }
+
 # Example usage in your FastAPI endpoint
 @app.get("/current-status")
 async def current_status():
@@ -488,15 +478,29 @@ async def get_sensor_data():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+    }
 @app.put("/change-water-bomb-mode")
 async def change_water_bomb_mode(mode: WaterBombMode):
-    print("Entro")
+    global bomb_mode  # Acceder a la variable global bomb_mode
     try:
-        print(mode.mode)
-        data = arduino.get_sensor_data(mode.mode)  # Asegúrate de acceder a la propiedad correcta
+        if mode.mode not in ["none", "empty", "fill"]:
+            return {
+                "status": "error",
+                "message": "Modo de bomba no válido. Opciones: none, empty, fill"
+            }
+        # Cambiar el modo de las bombas
+        if mode.mode == "none":
+            bomb_mode_none()
+        elif mode.mode == "empty":
+            bomb_mode_empty()
+        elif mode.mode == "fill":
+            bomb_mode_fill()
+        # Actualizar el estado de las bombas
+        bomb_mode = mode.mode
         return {
             "status": "success",
-            "mode": mode.mode
+            "mode": bomb_mode,
+            "current_status": get_current_status()
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
