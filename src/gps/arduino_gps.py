@@ -10,7 +10,7 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
             'orientation': 0.0,
             'speed': 0.0
         }
-
+        print("Entro en read GPS from Serial")
         while True:
             line = ser.readline().decode('ascii', errors='replace').strip()
             if not line:
@@ -41,6 +41,3 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
 
     except serial.SerialException as e:
         print(f"No se pudo abrir el puerto serial: {e}")
-
-if __name__ == "__main__":
-    read_gps_from_serial()
