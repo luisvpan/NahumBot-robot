@@ -6,7 +6,7 @@ from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.testclient import TestClient
 from geojson import Point
 from pydantic import BaseModel
-from gps.main import get_gps_location
+from gps.arduino_gps import read_gps_from_serial
 from camera.main import get_image
 from constants import is_simulation_mode, simulated_base64_image
 from motor.brushless_movement import backward, forward, turn_left, turn_right, stop
@@ -398,7 +398,7 @@ async def current_location(websocket: WebSocket):
 
    
     while True:
-        gps_location = get_gps_location()
+        gps_location = read_gps_from_serial()
 
         gps_point = Point((gps_location['lng'], gps_location['lat']))
         current_coords = {
