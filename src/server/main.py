@@ -210,8 +210,7 @@ def stop_aux():
 
 
 def get_current_status():
-    data = arduino.get_sensor_data('bombaestado')
-    print(data)
+ 
     
     if not data:  # Verifica si data es un diccionario vacío
         return {
@@ -222,9 +221,7 @@ def get_current_status():
                 "latitude": target_coords["latitude"],
                 "longitude": target_coords["longitude"]
             },
-            "bomb1": "off",  # Retorna "off" si data está vacío
-            "bomb2": "off",  # Retorna "off" si data está vacío
-            "target_orientation": target_orientation
+           "target_orientation": target_orientation
         }
     
     return {
