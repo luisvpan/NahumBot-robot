@@ -477,8 +477,6 @@ async def get_sensor_data():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-    }
 @app.put("/change-water-bomb-mode")
 async def change_water_bomb_mode(mode: WaterBombMode):
     global bomb_mode  # Acceder a la variable global bomb_mode
