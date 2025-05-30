@@ -26,3 +26,26 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
                     'lng': msg.get('lng', last_known_location['lng']),
                     'orientation': msg.get('orientation', last_known_location['orientation']),
                     'speed': msg.get('speed', last_known_location['speed'])
+                }
+
+                last_known_location = location
+                print(location)
+
+        except json.JSONDecodeError:
+            print("Error decodificando JSON, ignorando mensaje inválido...")
+        
+        except Exception as e:
+            print(f"Error al leer datos: {e}")
+
+        time.sleep(0.1)  # Pequeño retraso para evitar uso excesivo de CPU
+
+    except serial.SerialException as e:
+        print(f"No se pudo abrir el puerto serial: {e}")
+
+    except KeyboardInterrupt:
+        print("Programa interrumpido por el usuario. Cerrando...")
+
+    finally:
+        if 'ser' in locals() and ser.is_open:
+            ser.close()  # Asegurar cierre del puerto serial si está abierto
+        print("Puerto serial cerrado.")
