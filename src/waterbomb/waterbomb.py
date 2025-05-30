@@ -61,6 +61,8 @@ def command_listener():
             print_usage()
 
 if __name__ == "__main__":
+     # Al iniciar, poner los pines en HIGH (bombas apagadas)
+    bomb_mode_none()
     # Iniciar el hilo para escuchar comandos
     listener_thread = threading.Thread(target=command_listener)
     listener_thread.daemon = True  # Permitir que el hilo se cierre al finalizar el programa
