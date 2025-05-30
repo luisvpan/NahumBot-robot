@@ -1,5 +1,6 @@
 import serial
 import json
+import time
 
 def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
     try:
@@ -12,16 +13,13 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
         }
         print("Entro en read GPS from Serial")
         while True:
-            line = ser.readline().decode('ascii', errors='replace').strip()
-            if not line:
-                continue
-
-            # El Arduino envía JSON en texto plano, por ejemplo:
-            # {"lat":20.123456,"lng":-100.123456,"orientation":90.00,"speed":5.00}
             try:
+                line = ser.readline().decode('ascii', errors='replace').strip()
+                if not line:
+                    continue
+
                 msg = json.loads(line)
 
-                # Obtener datos con fallback a valores previos
                 location = {
                     'lat': msg.get('lat', last_known_location['lat']),
                     'lng': msg.get('lng', last_known_location['lng']),
@@ -29,15 +27,15 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
                     'speed': msg.get('speed', last_known_location['speed'])
                 }
 
-                # Actualizar ubicación conocida
                 last_known_location = location
-
-                # Aquí retornas la info o la procesas según necesitas
-                print(location)  # Por ahora solo lo imprime en consola
+                print(location)
 
             except json.JSONDecodeError:
-                # Si la línea no es JSON válido, la ignoramos
                 continue
+            except Exception as e:
+                print(f"Error al leer datos: {e}")
+
+            time.sleep(0.1)  # Pequeño retraso para evitar uso excesivo de CPU
 
     except serial.SerialException as e:
         print(f"No se pudo abrir el puerto serial: {e}")
