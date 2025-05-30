@@ -14,12 +14,13 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
         print("Entro en read GPS from Serial")
         while True:
             try:
+                print("antes de line")
                 line = ser.readline().decode('ascii', errors='replace').strip()
                 if not line:
                     continue
-
+                print("antes de msg")
                 msg = json.loads(line)
-
+                print("despeus de msg")
                 location = {
                     'lat': msg.get('lat', last_known_location['lat']),
                     'lng': msg.get('lng', last_known_location['lng']),
