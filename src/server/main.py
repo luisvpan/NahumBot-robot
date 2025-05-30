@@ -396,30 +396,34 @@ async def current_location(websocket: WebSocket):
     await websocket.accept()
 
     while True:
-        print("antes de read gps en el WEBSOCKET")
-        gps_location = read_gps_from_serial()
-        print("despues de read gps en el WEBSOCKET")
+        try:
+            print("antes de read gps en el WEBSOCKET")
+            gps_location = read_gps_from_serial()
+            print("despues de read gps en el WEBSOCKET")
 
-        if gps_location is None or not isinstance(gps_location, dict) or 'lng' not in gps_location or 'lat' not in gps_location:
-            await websocket.send_json({
-                "error": "No se recibieron datos procesables"
-            })
-            await asyncio.sleep(1)
-            continue  # Saltar esta iteración si no hay datos válidos
+            try:
+                gps_point = Point((gps_location['lng'], gps_location['lat']))
+                current_coords = {
+                    "latitude": gps_location['lat'],
+                    "longitude": gps_location['lng']
+                }
+                current_orientation = gps_location['orientation']
 
-        gps_point = Point((gps_location['lng'], gps_location['lat']))
-        current_coords = {
-            "latitude": gps_location['lat'],
-            "longitude": gps_location['lng']
-        }
-        current_orientation = gps_location['orientation']
+                await websocket.send_json({
+                    "coordinates": gps_point,
+                    "orientation": current_orientation,
+                    "speed": gps_location['speed'],
+                })
 
-        await asyncio.sleep(1)
-        await websocket.send_json({
-            "coordinates": gps_point,
-            "orientation": current_orientation,
-            "speed": gps_location['speed'],
-        })
+            except TypeError:
+                # Si gps_location es None, simplemente saltamos la iteración sin enviar mensaje
+                print("GPS no devolvió datos válidos, omitiendo esta iteración.")
+
+        except Exception as e:
+            print(f"Error inesperado en WebSocket: {e}")
+
+        await asyncio.sleep(1)  # Pequeña pausa antes de repetir el bucle
+
 
 
 @app.websocket("/socket-camera")
