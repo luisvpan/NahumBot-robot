@@ -1,6 +1,7 @@
 from gpiozero import DigitalOutputDevice
 from gpiozero.pins.pigpio import PiGPIOFactory
 import sys
+import threading
 
 # Configuración de la fábrica PiGPIO para el control remoto del GPIO
 factory = PiGPIOFactory(host='localhost', port=8888)
@@ -43,22 +44,32 @@ def print_usage():
     print("  empty -> Enciende la bomba de vaciado")
     print("  fill  -> Enciende la bomba de llenado")
 
+def command_listener():
+    """
+    Escucha los comandos del usuario en un hilo separado.
+    """
+    while True:
+        command = input("Ingrese comando (none|empty|fill): ").lower()
+        if command == "none":
+            bomb_mode_none()
+        elif command == "empty":
+            bomb_mode_empty()
+        elif command == "fill":
+            bomb_mode_fill()
+        else:
+            print(f"Comando desconocido: {command}")
+            print_usage()
+
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Error: argumento incorrecto.")
-        print_usage()
-        sys.exit(1)
+    # Iniciar el hilo para escuchar comandos
+    listener_thread = threading.Thread(target=command_listener)
+    listener_thread.daemon = True  # Permitir que el hilo se cierre al finalizar el programa
+    listener_thread.start()
 
-    command = sys.argv[1].lower()
-
-    if command == "none":
-        bomb_mode_none()
-    elif command == "empty":
-        bomb_mode_empty()
-    elif command == "fill":
-        bomb_mode_fill()
-    else:
-        print(f"Comando desconocido: {command}")
-        print_usage()
-        sys.exit(1)
-
+    # Mantener el programa en ejecución
+    try:
+        while True:
+            pass  # El programa principal puede hacer otras tareas aquí
+    except KeyboardInterrupt:
+        print("Programa terminado.")
+        sys.exit(0)
