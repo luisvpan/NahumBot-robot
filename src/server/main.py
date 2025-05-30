@@ -394,14 +394,19 @@ async def current_location(websocket: WebSocket):
     global current_coords
     global current_orientation
     await websocket.accept()
-    # Raspberry gps
 
-   
     while True:
         print("antes de read gps en el WEBSOCKET")
         gps_location = read_gps_from_serial()
         print("despues de read gps en el WEBSOCKET")
-        
+
+        if gps_location is None or not isinstance(gps_location, dict) or 'lng' not in gps_location or 'lat' not in gps_location:
+            await websocket.send_json({
+                "error": "No se recibieron datos procesables"
+            })
+            await asyncio.sleep(1)
+            continue  # Saltar esta iteración si no hay datos válidos
+
         gps_point = Point((gps_location['lng'], gps_location['lat']))
         current_coords = {
             "latitude": gps_location['lat'],
@@ -413,8 +418,9 @@ async def current_location(websocket: WebSocket):
         await websocket.send_json({
             "coordinates": gps_point,
             "orientation": current_orientation,
-            "speed": gps_location['speed'], # a diferencia de la velocidad teorica, esta es la velocidad del GPS, no se ajusta, se mide
+            "speed": gps_location['speed'],
         })
+
 
 @app.websocket("/socket-camera")
 async def websocket_kamavinga(websocket: WebSocket):
