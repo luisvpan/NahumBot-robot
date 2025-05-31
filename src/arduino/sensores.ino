@@ -1,15 +1,27 @@
 #include <Wire.h>
 #include <Adafruit_BMP085.h>
 #include <QMC5883LCompass.h>
+#include <OneWire.h>                
+#include <DallasTemperature.h>
 
 #define TdsSensorPin A0
 #define TurbiditySensorPin A1
+#define pHSensorPin A2
+#define OneWireBusPin1 2 
+#define OneWireBusPin2 3
 #define VREF 5.0   // Voltaje de referencia analógica (Voltios) del ADC
 #define SCOUNT 30  // Número de muestras para el sensor TDS
 
 // Objetos para los sensores GY-87
 Adafruit_BMP085 bmp;
 QMC5883LCompass compass;
+
+// Objetos para los sensores de temperatura independientes
+OneWire oneWire1(OneWireBusPin1);
+DallasTemperature sensorTemp1(&oneWire1);
+
+OneWire oneWire2(OneWireBusPin2);
+DallasTemperature sensorTemp2(&oneWire2);
 
 // Variables para el sensor TDS
 int analogBuffer[SCOUNT];  // Almacena el valor analógico en el array, leído desde ADC
@@ -21,28 +33,6 @@ float averageVoltage = 0, tdsValue = 0, temperature = 25;
 String inputString = "";      // String para almacenar los datos entrantes
 bool stringComplete = false;  // Bandera para indicar cuando el string está completo
 
-#define BombaPin1 6  // Pin para la primera bomba
-#define BombaPin2 7  // Pin para la segunda bomba
-
-// Funciones para controlar las bombas de agua
-void setModo(String modo) {
-  if (modo.equalsIgnoreCase("ninguno")) {
-    digitalWrite(BombaPin1, HIGH);
-    digitalWrite(BombaPin2, HIGH);
-  } else if (modo.equalsIgnoreCase("vaciar")) {
-    digitalWrite(BombaPin1, HIGH);
-    digitalWrite(BombaPin2, LOW);
-  } else if (modo.equalsIgnoreCase("llenar")) {
-    digitalWrite(BombaPin1, LOW);
-    digitalWrite(BombaPin2, HIGH);
-  }
-}
-
-String estadoBomba() {
-  String estado1 = digitalRead(BombaPin1) == LOW ? "Bomba 1: on" : "Bomba 1: off";
-  String estado2 = digitalRead(BombaPin2) == LOW ? "Bomba 2: on" : "Bomba 2: off";
-  return estado1 + ", " + estado2;
-}
 void setup() {
   // Inicializa la comunicación serial con la Raspberry Pi
   Serial.begin(9600);
@@ -59,16 +49,15 @@ void setup() {
   compass.init();
   compass.setCalibration(-1200, 1200, -1200, 1200, -1200, 1200);
 
-  // Configura los pines
+  // Inicializa los sensores de temperatura independientes
+  sensorTemp1.begin();
+  sensorTemp2.begin();
+
+  // Configura los pines de sensores analógicos
   pinMode(TdsSensorPin, INPUT);
   pinMode(TurbiditySensorPin, INPUT);
+  pinMode(pHSensorPin, INPUT); // Configurar el sensor de pH
 
-  pinMode(BombaPin1, OUTPUT);
-  pinMode(BombaPin2, OUTPUT);
-
-  digitalWrite(BombaPin1, HIGH);
-  digitalWrite(BombaPin2, HIGH);
-  // Reserva 200 bytes para el inputString
   inputString.reserve(200);
 }
 
@@ -105,12 +94,14 @@ void loop() {
       sendTurbidityValue();
     } else if (inputString.equalsIgnoreCase("gy87")) {
       sendGY87Values();
+    } else if (inputString.equalsIgnoreCase("ph")) {
+      sendPHValue();
+    } else if (inputString.equalsIgnoreCase("temp1")) {
+      sendTemperatureValue(1);
+    } else if (inputString.equalsIgnoreCase("temp2")) {
+      sendTemperatureValue(2);
     } else if (inputString.equalsIgnoreCase("todos")) {
       sendAllSensors();
-    } else if (inputString.equalsIgnoreCase("bombaestado")) {
-      Serial.println(estadoBomba());
-    } else if (inputString.equalsIgnoreCase("ninguno") || inputString.equalsIgnoreCase("vaciar") || inputString.equalsIgnoreCase("llenar")) {
-      setModo(inputString);
     }
 
     inputString = "";
@@ -118,8 +109,6 @@ void loop() {
   }
 }
 
-
-// Función para calcular y enviar el valor TDS
 void sendTDSValue() {
   for (copyIndex = 0; copyIndex < SCOUNT; copyIndex++) {
     analogBufferTemp[copyIndex] = analogBuffer[copyIndex];
@@ -143,7 +132,7 @@ void sendTurbidityValue() {
 
 // Función para enviar los valores del sensor GY-87
 void sendGY87Values() {
-  if (!bmp.begin()) return
+  if (!bmp.begin()) return;
 
   float temperatura = bmp.readTemperature();
   float presion = bmp.readPressure() / 100.0;
@@ -168,11 +157,35 @@ void sendGY87Values() {
   Serial.println("}}");
 }
 
-// Función para enviar todos los valores de sensores
+void sendPHValue() {
+  float voltage = analogRead(pHSensorPin) * (VREF / 1023.0);
+  float pH = 3.5 * voltage;  // Ajustar según calibración específica
+  Serial.print("PH:");
+  Serial.println(pH);
+}
+
+// Enviar temperatura por sensor 1 o 2, según índice
+void sendTemperatureValue(int sensorNum) {
+  if (sensorNum == 1) {
+    sensorTemp1.requestTemperatures();
+    float temp1 = sensorTemp1.getTempCByIndex(0);
+    Serial.print("TEMP1: ");
+    Serial.println(temp1);
+  } else if (sensorNum == 2) {
+    sensorTemp2.requestTemperatures();
+    float temp2 = sensorTemp2.getTempCByIndex(0);
+    Serial.print("TEMP2: ");
+    Serial.println(temp2);
+  }
+}
+
 void sendAllSensors() {
   sendTDSValue();
   sendTurbidityValue();
+  sendPHValue();
   sendGY87Values();
+  sendTemperatureValue(1);
+  sendTemperatureValue(2);
 }
 
 // Función auxiliar para calcular la mediana
