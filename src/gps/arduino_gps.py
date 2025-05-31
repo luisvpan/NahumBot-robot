@@ -17,6 +17,7 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
             line = ser.readline().decode('ascii', errors='replace').strip()
             if line:
                 print("antes de msg")
+                print(line)
                 msg = json.loads(line)
                 print(msg)
                 print("después de msg")
