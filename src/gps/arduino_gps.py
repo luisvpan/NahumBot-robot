@@ -67,6 +67,7 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
                     }
                     last_known_location = location
                     print(json.dumps(location, indent=4))
+                    return location
 
         except Exception as e:
             print(f"Error al leer datos: {e}")
