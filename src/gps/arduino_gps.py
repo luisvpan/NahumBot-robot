@@ -11,7 +11,6 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
             'orientation': 0.0,
             'speed': 0.0
         }
-        print("Entro en read GPS from Serial")
 
         try:
             print("antes de line")
@@ -19,8 +18,8 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
             if line:
                 print("antes de msg")
                 msg = json.loads(line)
+                print(msg)
                 print("después de msg")
-
                 location = {
                     'lat': msg.get('lat', last_known_location['lat']),
                     'lng': msg.get('lng', last_known_location['lng']),
