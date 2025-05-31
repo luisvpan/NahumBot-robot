@@ -15,23 +15,23 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
         try:
             line = ser.readline().decode('ascii', errors='replace').strip()
             print(line)
-            if line.startswith("$GP"):  # Captura cualquier sentencia NMEA de GPS
-                try:
-                    print("ENCONTRO LINEA CORRECTA")
-                    msg = pynmea2.parse(line)
-                    print("Mensaje: ", msg)
-                    if hasattr(msg, 'latitude') and hasattr(msg, 'longitude'):
-                        location = {
-                            'lat': msg.latitude,
-                            'lng': msg.longitude,
-                            'orientation': 0.0,
-                            'speed': 0.0  # Velocidad fija en 0
-                        }
-                        last_known_location = location
-                        print(json.dumps(location, indent=4))
 
-                except pynmea2.ParseError:
-                    print("Error al analizar la frase NMEA")
+            try:
+                msg = pynmea2.parse(line)
+                print("Mensaje:", msg)
+
+                if hasattr(msg, 'latitude') and hasattr(msg, 'longitude'):
+                    location = {
+                        'lat': msg.latitude,
+                        'lng': msg.longitude,
+                        'orientation': 0.0,
+                        'speed': 0.0  # Velocidad fija en 0
+                    }
+                    last_known_location = location
+                    print(json.dumps(location, indent=4))
+
+            except pynmea2.ParseError:
+                print("Error al analizar la frase NMEA")
 
         except Exception as e:
             print(f"Error al leer datos: {e}")
