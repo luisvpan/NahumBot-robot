@@ -1,6 +1,6 @@
 import serial
 import json
-import time
+import pynmea2
 
 def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
     try:
@@ -12,40 +12,35 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
             'speed': 0.0
         }
 
-        try:
-            print("antes de line")
-            line = ser.readline().decode('ascii', errors='replace').strip()
-            if line:
-                print("antes de msg")
-                print(line)
-                msg = json.loads(line)
-                print(msg)
-                print("después de msg")
-                location = {
-                    'lat': msg.get('lat', last_known_location['lat']),
-                    'lng': msg.get('lng', last_known_location['lng']),
-                    'orientation': msg.get('orientation', last_known_location['orientation']),
-                    'speed': msg.get('speed', last_known_location['speed'])
-                }
+        while True:
+            try:
+                line = ser.readline().decode('ascii', errors='replace').strip()
+                if line.startswith("$GP"):  # Captura cualquier sentencia NMEA de GPS
+                    try:
+                        msg = pynmea2.parse(line)
+                        if hasattr(msg, 'latitude') and hasattr(msg, 'longitude'):
+                            location = {
+                                'lat': msg.latitude,
+                                'lng': msg.longitude,
+                                'orientation': 0.0,
+                                'speed': 0.0  # Velocidad fija en 0
+                            }
+                            last_known_location = location
+                            print(json.dumps(location, indent=4))
 
-                last_known_location = location
-                print(location)
+                    except pynmea2.ParseError:
+                        print("Error al analizar la frase NMEA")
 
-        except json.JSONDecodeError:
-            print("Error decodificando JSON, ignorando mensaje inválido...")
-        
-        except Exception as e:
-            print(f"Error al leer datos: {e}")
-
-        time.sleep(0.1)  # Pequeño retraso para evitar uso excesivo de CPU
+            except Exception as e:
+                print(f"Error al leer datos: {e}")
 
     except serial.SerialException as e:
         print(f"No se pudo abrir el puerto serial: {e}")
 
-    except KeyboardInterrupt:
-        print("Programa interrumpido por el usuario. Cerrando...")
-
     finally:
         if 'ser' in locals() and ser.is_open:
-            ser.close()  # Asegurar cierre del puerto serial si está abierto
+            ser.close()
         print("Puerto serial cerrado.")
+
+if __name__ == "__main__":
+    read_gps_from_serial()
