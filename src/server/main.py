@@ -472,9 +472,9 @@ async def get_sensor_data():
                 "data": {
                     "turbidez": sensor_data.turbidez,
                     "tds": sensor_data.tds,
-                    "ph": random.uniform(0, 14),
-                    "temperaturaAfuera": random.uniform(0, 100),
-                    "temperaturaSumergido": random.uniform(0, 100),
+                    "ph": sensor_data.ph,
+                    "temperaturaMuestra": sensor_data.temp1,
+                    "temperaturaSumergido": sensor_data.temp2,
                     "rayosUV": random.uniform(0, 100),
                     "latitud": random.uniform(-90, 90),
                     "longitud": random.uniform(-180, 180),
