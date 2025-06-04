@@ -168,11 +168,13 @@ void sendPHValue() {
 void sendTemperatureValue(int sensorNum) {
   if (sensorNum == 1) {
     sensorTemp1.requestTemperatures();
+    delay(750);  // Esperar a que el sensor termine la conversión
     float temp1 = sensorTemp1.getTempCByIndex(0);
     Serial.print("TEMP1: ");
     Serial.println(temp1);
   } else if (sensorNum == 2) {
     sensorTemp2.requestTemperatures();
+    delay(750);  // Esperar a que el sensor termine la conversión
     float temp2 = sensorTemp2.getTempCByIndex(0);
     Serial.print("TEMP2: ");
     Serial.println(temp2);
@@ -180,12 +182,27 @@ void sendTemperatureValue(int sensorNum) {
 }
 
 void sendAllSensors() {
+  // Solicitar temperaturas de ambos sensores simultáneamente
+  sensorTemp1.requestTemperatures();
+  sensorTemp2.requestTemperatures();
+  
+  // Esperar a que ambos sensores terminen la conversión
+  delay(750);  // Los DS18B20 necesitan aproximadamente 750ms para la conversión
+  
+  // Enviar el resto de los datos
   sendTDSValue();
   sendTurbidityValue();
   sendPHValue();
   sendGY87Values();
-  sendTemperatureValue(1);
-  sendTemperatureValue(2);
+  
+  // Enviar las temperaturas que ya están listas
+  float temp1 = sensorTemp1.getTempCByIndex(0);
+  float temp2 = sensorTemp2.getTempCByIndex(0);
+  
+  Serial.print("TEMP1: ");
+  Serial.println(temp1);
+  Serial.print("TEMP2: ");
+  Serial.println(temp2);
 }
 
 // Función auxiliar para calcular la mediana

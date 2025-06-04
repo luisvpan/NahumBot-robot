@@ -31,7 +31,7 @@ class ArduinoSensorInterface:
     
     def _flush_input(self):
         """Limpia el buffer de entrada para eliminar datos antiguos"""
-        time.sleep(1.5)
+        time.sleep(0.5)
         while self.serial_conn.in_waiting:
             print(f"Mensaje de Arduino: {self.serial_conn.readline().decode('utf-8').strip()}")
             time.sleep(0.1)
@@ -67,7 +67,7 @@ class ArduinoSensorInterface:
             self.serial_conn.write(f"{sensor_type.lower()}\n".encode('utf-8'))
             
             # Espera y recoge la respuesta
-            time.sleep(0.5)
+            time.sleep(1.5)  # Aumentado de 0.5 a 2.5 segundos para dar más tiempo a los sensores
             
             # Procesa los datos recibidos
             result = {}
