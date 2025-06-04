@@ -3,6 +3,14 @@ import json
 import pynmea2
 import re
 
+# Variable global para almacenar la última ubicación conocida
+last_known_location = {
+    'lat': 0.0,
+    'lng': 0.0,
+    'orientation': 0.0,
+    'speed': 0.0
+}
+
 def extract_lat_lng(line):
     """Extrae manualmente latitud y longitud si la línea es imperfecta."""
     match = re.search(r"(\d{4}\.\d+),([NS]),(\d{5}\.\d+),([EW])", line)
@@ -23,14 +31,9 @@ def extract_lat_lng(line):
     return None, None
 
 def read_gps_from_serial(port="/dev/ttyACM0", baudrate=9600):
+    global last_known_location
     try:
         ser = serial.Serial(port, baudrate, timeout=1)
-        last_known_location = {
-            'lat': 0.0,
-            'lng': 0.0,
-            'orientation': 0.0,
-            'speed': 0.0
-        }
 
         while True:
             try:
