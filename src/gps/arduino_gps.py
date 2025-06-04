@@ -76,10 +76,5 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=9600):
     except serial.SerialException as e:
         print(f"No se pudo abrir el puerto serial: {e}")
 
-    finally:
-        if 'ser' in locals() and ser.is_open:
-            ser.close()
-        print("Puerto serial cerrado.")
-
 if __name__ == "__main__":
     read_gps_from_serial()
