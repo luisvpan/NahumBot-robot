@@ -101,7 +101,7 @@ class ArduinoSensorInterface:
                         result[key] = float(value)
                      # Almacena el estado de las bombas
                     else:
-                        result[key] = int(value)  # Para otros sensores, convierte a int
+                        result[key] = float(value)  # Para otros sensores, convierte a int
                 time.sleep(0.1)
             
             return result

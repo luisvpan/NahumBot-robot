@@ -475,7 +475,7 @@ async def get_sensor_data():
                     "ph": sensor_data.ph,
                     "temperaturaMuestra": sensor_data.temp1,
                     "temperaturaSumergido": sensor_data.temp2,
-                    "rayosUV": random.uniform(0, 100),
+                    "rayosUV": sensor_data.uv,
                     "latitud": random.uniform(-90, 90),
                     "longitud": random.uniform(-180, 180),
                 }
