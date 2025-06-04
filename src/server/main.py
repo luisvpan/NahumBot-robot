@@ -466,7 +466,7 @@ async def get_sensor_data():
                         setattr(self, key, value)
                         
             sensor_data = SensorData(**data)
-            
+            print("sensor_data =>", sensor_data)
             return {
                 "status": "success",
                 "data": {
