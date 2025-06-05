@@ -35,43 +35,43 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=9600):
     try:
         ser = serial.Serial(port, baudrate, timeout=1)
 
-        while True:
+        # Leer solo una línea en lugar de usar un bucle infinito
+        try:
+            line = ser.readline().decode('ascii', errors='replace').strip()
+            print("Línea recibida:", line)
+
+            if line.startswith("Ori:"):
+                # Extraer el valor de orientación
+                match = re.search(r"Ori:\s*([\d\.]+)", line)
+                if match:
+                    last_known_location['orientation'] = float(match.group(1))
+                return last_known_location  # Retornar después de extraer orientación
+
             try:
-                line = ser.readline().decode('ascii', errors='replace').strip()
-                print("Línea recibida:", line)
+                msg = pynmea2.parse(line)
+                print("Mensaje NMEA válido:", msg)
+                if hasattr(msg, 'latitude') and hasattr(msg, 'longitude'):
+                    lat, lng = msg.latitude, msg.longitude
+                else:
+                    lat, lng = extract_lat_lng(line)  # Intentar extraer manualmente
 
-                if line.startswith("Ori:"):
-                    # Extraer el valor de orientación
-                    match = re.search(r"Ori:\s*([\d\.]+)", line)
-                    if match:
-                        last_known_location['orientation'] = float(match.group(1))
-                    continue  # Ignorar esta línea y seguir leyendo
+                if lat is not None and lng is not None:
+                    last_known_location['lat'] = lat
+                    last_known_location['lng'] = lng
+                    print(json.dumps(last_known_location, indent=4))
+                    return last_known_location
 
-                try:
-                    msg = pynmea2.parse(line)
-                    print("Mensaje NMEA válido:", msg)
-                    if hasattr(msg, 'latitude') and hasattr(msg, 'longitude'):
-                        lat, lng = msg.latitude, msg.longitude
-                    else:
-                        lat, lng = extract_lat_lng(line)  # Intentar extraer manualmente
+            except pynmea2.ParseError:
+                print("Error al analizar la frase NMEA, intentando extracción manual...")
+                lat, lng = extract_lat_lng(line)
+                if lat is not None and lng is not None:
+                    last_known_location['lat'] = lat
+                    last_known_location['lng'] = lng
+                    print(json.dumps(last_known_location, indent=4))
+                    return last_known_location
 
-                    if lat is not None and lng is not None:
-                        last_known_location['lat'] = lat
-                        last_known_location['lng'] = lng
-                        print(json.dumps(last_known_location, indent=4))
-                        return last_known_location
-
-                except pynmea2.ParseError:
-                    print("Error al analizar la frase NMEA, intentando extracción manual...")
-                    lat, lng = extract_lat_lng(line)
-                    if lat is not None and lng is not None:
-                        last_known_location['lat'] = lat
-                        last_known_location['lng'] = lng
-                        print(json.dumps(last_known_location, indent=4))
-                        return last_known_location
-
-            except Exception as e:
-                print(f"Error al leer datos: {e}")
+        except Exception as e:
+            print(f"Error al leer datos: {e}")
 
     except serial.SerialException as e:
         print(f"No se pudo abrir el puerto serial: {e}")
