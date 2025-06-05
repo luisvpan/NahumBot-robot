@@ -10,6 +10,7 @@ last_known_location = {
     'speed': 0.0
 }
 
+
 def extract_lat_lng(line):
     """Extrae manualmente latitud y longitud si la línea es imperfecta."""
     match = re.search(r"(\d{4}\.\d+),([NS]),(\d{5}\.\d+),([EW])", line)

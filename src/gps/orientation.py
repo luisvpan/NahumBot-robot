@@ -1,4 +1,4 @@
-import smbus
+import smbus2
 import math
 
 # Dirección I2C del HMC5883L
@@ -10,15 +10,14 @@ MODE = 0x02
 X_MSB = 0x03
 
 def read_orientation():
-    bus = smbus.SMBus(1)
+    with smbus2.SMBus(1) as bus:
+        # Configurar el sensor (modo continuo, ganancia, tasa de muestreo)
+        bus.write_byte_data(HMC5883L_ADDRESS, CONFIG_A, 0x70)  # 8-average, 15 Hz default, normal measurement
+        bus.write_byte_data(HMC5883L_ADDRESS, CONFIG_B, 0xA0)  # Gain = 5
+        bus.write_byte_data(HMC5883L_ADDRESS, MODE, 0x00)      # Continuous measurement mode
 
-    # Configurar el sensor (modo continuo, ganancia, tasa de muestreo)
-    bus.write_byte_data(HMC5883L_ADDRESS, CONFIG_A, 0x70)  # 8-average, 15 Hz default, normal measurement
-    bus.write_byte_data(HMC5883L_ADDRESS, CONFIG_B, 0xA0)  # Gain = 5
-    bus.write_byte_data(HMC5883L_ADDRESS, MODE, 0x00)      # Continuous measurement mode
-
-    # Leer 6 bytes desde el registro X_MSB
-    data = bus.read_i2c_block_data(HMC5883L_ADDRESS, X_MSB, 6)
+        # Leer 6 bytes desde el registro X_MSB
+        data = bus.read_i2c_block_data(HMC5883L_ADDRESS, X_MSB, 6)
 
     # Convertir bytes a valores 16-bit con signo
     x = data[0] << 8 | data[1]
@@ -39,3 +38,4 @@ def read_orientation():
         heading_deg += 360
 
     return heading_deg
+
