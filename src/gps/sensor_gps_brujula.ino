@@ -46,10 +46,9 @@ void loop()
 
   // Imprimir datos en una sola línea
   Serial.print(gpsData);
-  delay(1000);
+  delay(100);
   Serial.println("");
   Serial.print("Ori: ");
   Serial.println(headingDegrees);
   
-  delay(500);
 }

@@ -7,7 +7,6 @@ import re
 last_known_location = {
     'lat': 0.0,
     'lng': 0.0,
-    'orientation': 0.0,
     'speed': 0.0
 }
 
@@ -30,7 +29,7 @@ def extract_lat_lng(line):
         return lat, lng
     return None, None
 
-def read_gps_from_serial(port="/dev/ttyACM0", baudrate=9600):
+def read_gps_from_serial(port="/dev/ttyACM0", baudrate=115200):
     global last_known_location
     try:
         ser = serial.Serial(port, baudrate, timeout=1)
@@ -39,13 +38,6 @@ def read_gps_from_serial(port="/dev/ttyACM0", baudrate=9600):
         try:
             line = ser.readline().decode('ascii', errors='replace').strip()
             print("Línea recibida:", line)
-
-            if line.startswith("Ori:"):
-                # Extraer el valor de orientación
-                match = re.search(r"Ori:\s*([\d\.]+)", line)
-                if match:
-                    last_known_location['orientation'] = float(match.group(1))
-                return last_known_location  # Retornar después de extraer orientación
 
             try:
                 msg = pynmea2.parse(line)
