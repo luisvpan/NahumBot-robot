@@ -399,7 +399,7 @@ async def current_location(websocket: WebSocket):
     while True:
         try:
             gps_location = read_gps_from_serial()  
-            new_orientation = read_orientation()      
+            new_orientation = 0    
             try:
                 gps_point = Point((gps_location['lng'], gps_location['lat']))
                 current_coords = {
