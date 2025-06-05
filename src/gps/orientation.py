@@ -34,6 +34,7 @@ def read_orientation():
     # Calcular heading en radianes y luego a grados
     heading_rad = math.atan2(y, x)
     heading_deg = math.degrees(heading_rad)
+    print("heading =>", heading_deg)
     if heading_deg < 0:
         heading_deg += 360
 
