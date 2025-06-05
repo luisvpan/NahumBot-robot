@@ -2,13 +2,13 @@ import smbus2
 import math
 
 def get_orientation():
-    bus = smbus2.SMBus(1)
+    bus = smbus2.SMBus(2)
     address = 0x1E  # Dirección I2C del HMC5883L
 
     try:
         # Configurar el modo de operación
         bus.write_byte_data(address, 0x02, 0x00)
-
+        print("bus ", bus)
         # Leer datos del magnetómetro
         data = bus.read_i2c_block_data(address, 0x03, 6)
         x = (data[0] << 8) | data[1]
