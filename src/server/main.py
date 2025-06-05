@@ -6,7 +6,6 @@ from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.testclient import TestClient
 from geojson import Point
 from pydantic import BaseModel
-from gps.orientation import read_orientation
 from gps.arduino_gps import read_gps_from_serial
 from camera.main import get_image
 from constants import is_simulation_mode, simulated_base64_image
